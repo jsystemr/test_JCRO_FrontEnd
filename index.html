@@ -10,8 +10,9 @@
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
   crossorigin="anonymous"></script>
-<script>
+<script type="text/javascript">
 const ulrServer="http://localhost:8080/";
+
 $(function() {
 
 $.ajax({
@@ -26,7 +27,8 @@ $.ajax({
         addfilaTabla(v);
         }
     });
-  //enviarDatos();
+
+    //enviarDatos();
  
   function enviarDatos(){
     $.ajax({
@@ -49,11 +51,11 @@ $.ajax({
           let nombre=ob.nombre;
           let monto=ob.monoto_deducir;
           let fecha=ob.fecha_cambio;
-					$('#detalle').append("<tr><td>"+id+"</td>"
+					$('#detalle').append("<tr id="+id+"><td>"+id+"</td>"
 							+"<td>"+nombre+"</td>"
 							+"<td>"+monto+"</td>"
 							+"<td>"+fecha+"</td>"
-							+"<td></td></tr>");
+            +"<td><button class='btn btn-danger mb-3' onclick='return confirm(\"Esta seguro de quitar el registro?\")' >Delete</button></td></tr>");
 				}
 
 });
@@ -61,15 +63,71 @@ $.ajax({
 </script>
 </head>
 <body>
-  <div class="table-responsive">
-    <table class="table table-strip table-hover">
-    <thead>
-    <th>ID</th><th>Nombre</th><th>Monto Deducir</th><th>Fecha Cambio</th><th>Seleccionado</th>
-    </thead>
-    <tbody id="detalle">
-    <tr><td></td><td></td><td></td><td></td><td></td></tr>
-    </tbody>
-    </table>
+  <div class="row">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          Prueba Practica Zamorano 29-05-2021
+        </div>
+        <ul class="nav justify-content-center">
+          <li class="nav-item">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Agregar
+            </button>
+          </li>
+        </ul>
+        <div class="card-body">
+          <h5 class="card-title">Listado de Datos</h5>
+          <div class="table-responsive">
+            <table class="table table-strip table-hover table-bordered ">
+            <thead>
+            <th>ID</th><th>Nombre</th><th>Monto Deducir</th><th>Fecha Cambio</th><th>Accion</th>
+            </thead>
+            <tbody id="detalle">
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+            </table>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div> 
+  <!--
+    Area del Modal para Enviar Informaicion
+  -->
+
+   <!-- Modal -->
+   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ingrese la Informaci&oacute;n Solicitada</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="#" id="frmdatos">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="txtnom" placeholder="Jhon Doe">
+            </div>
+            <div class="mb-3">
+              <label for="monto" class="form-label">Monto a deducir</label>
+              <input type="number" class="form-control" id="txtmonto" placeholder="99.00">
+            </div>
+            <div class="mb-3">
+              <label for="fecha" class="form-label">Fecha Cambio</label>
+              <input type="date" class="form-control" id="txtfecha" placeholder="27/09/2021">
+            </div>
+            <button type="submit" class="btn btn-success mb-3">Enviar</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
 </body>
 </html>
