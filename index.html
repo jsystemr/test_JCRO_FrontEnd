@@ -12,41 +12,28 @@
   crossorigin="anonymous"></script>
 <script type="text/javascript">
 const ulrServer="http://localhost:8080/";
+cargarDatos();
 
-$(function() {
-
-$.ajax({
-        url: ulrServer+"tablamemoria",
-        type: 'GET',
-        // This is the important par
-        //dataType: 'json',
-    }).done(function(data) {
-      console.log("Salio de Ajax!");
-     for(let v of data.values()){
-        //console.log(v);
-        addfilaTabla(v);
-        }
+function cargarDatos(){
+  console.log('Entro a cargar datos');
+      fetch(ulrServer+"tablamemoria", {
+      method: 'GET', // or 'PUT'
+      //body: JSON.stringify(data), // data can be `string` or {object}!
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+    .catch(error => console.error('Error:', error))
+    .then(function(data){
+      $('#detalle').html("");
+        for(let v of data.values()){
+            console.log(v);
+            addfilaTabla(v);
+            }
     });
-
-    //enviarDatos();
- 
-  function enviarDatos(){
-    $.ajax({
-        url: ulrServer+'tablamemoria/new',            
-        method: 'POST',
-        crossDomain: true,
-        dataType: 'jsonp',
-        data: {id:0,nombre:'Jhon Doe',monoto_deducir:6777.88,fecha_cambio:'2021-09-23'},
-        success: function (response) {
-            console.log(response);
-        },
-        error: function (error) {
-            console.log(error);
-        }
-        });
-  }
-
-  function addfilaTabla(ob){
+}
+  
+function addfilaTabla(ob){
           let id=ob.id;
           let nombre=ob.nombre;
           let monto=ob.monoto_deducir;
@@ -55,10 +42,26 @@ $.ajax({
 							+"<td>"+nombre+"</td>"
 							+"<td>"+monto+"</td>"
 							+"<td>"+fecha+"</td>"
-            +"<td><button class='btn btn-danger mb-3' onclick='return confirm(\"Esta seguro de quitar el registro?\")' >Delete</button></td></tr>");
+            +"<td><button id='btn"+id+"' class='btn btn-danger mb-3 btndel' onclick='verbtndel("+id+")' >Delete</button></td></tr>");
 				}
 
-});
+function verbtndel(parm){
+  var delreg=false;
+  if(confirm('Esta seguro de quitar el registro?')){
+    console.log('Elemento a Eliminar->'+parm);
+    fetch(ulrServer+'tablamemoria/'+parm, {
+        method: 'DELETE',
+        body: {id:parm}
+      })
+      .then(response => response.json())
+      .catch(error => console.error('Error:', error))
+      .then(response => {delreg=true});
+      if(delreg){
+        cargarDatos();
+      }
+      }
+  }
+
 
 </script>
 </head>
@@ -108,17 +111,17 @@ $.ajax({
           <form action="#" id="frmdatos">
             <div class="mb-3">
               <label for="nombre" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="txtnom" placeholder="Jhon Doe">
+              <input type="text" class="form-control" id="txtnom" placeholder="Jhon Doe" required>
             </div>
             <div class="mb-3">
               <label for="monto" class="form-label">Monto a deducir</label>
-              <input type="number" class="form-control" id="txtmonto" placeholder="99.00">
+              <input type="number" class="form-control" step="0.01" id="txtmonto" placeholder="99.00" required>
             </div>
             <div class="mb-3">
               <label for="fecha" class="form-label">Fecha Cambio</label>
-              <input type="date" class="form-control" id="txtfecha" placeholder="27/09/2021">
+              <input type="date" class="form-control" id="txtfecha" placeholder="27/09/2021" required>
             </div>
-            <button type="submit" class="btn btn-success mb-3">Enviar</button>
+            <button type="button" id="btnsave" class="btn btn-success mb-3">Enviar</button>
           </form>
         </div>
         <div class="modal-footer">
@@ -128,6 +131,37 @@ $.ajax({
     </div>
   </div>
 </div>
-
+<script type="text/javascript">
+ document.getElementById("btnsave").addEventListener('click',()=>{
+   var nom=document.getElementById("txtnom").value;
+   var monto=parseFloat(document.getElementById("txtmonto").value);
+   var fecha=document.getElementById("txtfecha").value;
+   var paso=true;
+   var resdata=false;
+   if(nom.value==""){paso=false;}
+   if(monto.value==""){paso=false;}
+   if(fecha.value==""){paso=false;}
+      if(paso)
+        {
+          var tablamemoria= {id:0,nombre:nom,monto_deducir:monto,fecha_cambio:fecha};
+          console.log(JSON.stringify(tablamemoria));
+         fetch(ulrServer+'tablamemoria/new', {
+            method: 'POST',
+            body: JSON.stringify(tablamemoria), 
+            headers:{
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => response.json())
+          .catch(error => console.error('Error:', error))
+          .then(response => resdata=true);
+         if(resdata){
+           cargarDatos();
+         }
+        }else{
+          alert('Debe ingresar informacion!');
+        }
+    });
+  </script>
 </body>
 </html>
