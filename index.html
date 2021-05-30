@@ -36,7 +36,7 @@ function cargarDatos(){
 function addfilaTabla(ob){
           let id=ob.id;
           let nombre=ob.nombre;
-          let monto=ob.monoto_deducir;
+          let monto=ob.monto_deducir;
           let fecha=ob.fecha_cambio;
 					$('#detalle').append("<tr id="+id+"><td>"+id+"</td>"
 							+"<td>"+nombre+"</td>"
@@ -55,10 +55,9 @@ function verbtndel(parm){
       })
       .then(response => response.json())
       .catch(error => console.error('Error:', error))
-      .then(response => {delreg=true});
-      if(delreg){
-        cargarDatos();
-      }
+      .then(response => {
+             cargarDatos();
+      });
       }
   }
 
@@ -154,10 +153,12 @@ function verbtndel(parm){
           })
           .then(response => response.json())
           .catch(error => console.error('Error:', error))
-          .then(response => resdata=true);
-         if(resdata){
-           cargarDatos();
-         }
+          .then(response =>{
+            alert('Registro agregado exitosamente!');
+            nom.value="";monto.value=0.0;
+            cargarDatos();
+          });
+           
         }else{
           alert('Debe ingresar informacion!');
         }
